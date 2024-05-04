@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
 import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.min.css";
+import "owl.carousel/dist/assets/owl.theme.default.min.css";
+import Skeleton from "../UI/Skeleton";
 
 const HotCollections = () => {
-  const [data, setData] = useState([]);
+  const [collections, setCollections] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHotCollections = async () => {
@@ -13,9 +16,11 @@ const HotCollections = () => {
         const { data } = await axios.get(
           "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections"
         );
-        setData(data);
+        setCollections(data);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching hot collections:", error);
+        setIsLoading(false);
       }
     };
 
@@ -23,21 +28,25 @@ const HotCollections = () => {
   }, []);
 
   const options = {
-    items: 4,
     loop: true,
+    margin: 10,
     nav: true,
+    dots: false,
     navText: [
-      '<i class="fa fa-chevron-left"></i>',
-      '<i class="fa fa-chevron-right"></i>',
+      '<span aria-label="Prev">‹</span>',
+      '<span aria-label="Next">›</span>',
     ],
     responsive: {
       0: {
         items: 1,
       },
-      600: {
+      740: {
         items: 2,
       },
       1000: {
+        items: 3,
+      },
+      1400: {
         items: 4,
       },
     },
@@ -53,31 +62,56 @@ const HotCollections = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          <div className="col-lg-12">
-            <OwlCarousel className="owl-theme" {...options}>
-              {data.map((item, index) => (
-                <div key={index} className="nft_coll">
-                  <div className="nft_wrap">
-                    <Link to="/item-details">
-                      <img src={item.nftImage} className="lazy img-fluid" alt="" />
-                    </Link>
+          <OwlCarousel className="owl-carousel" {...options}>
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div className="nft_coll" key={index}>
+                    <div className="nft_wrap">
+                      <Skeleton
+                        width="100%"
+                        height="300px"
+                        borderRadius="10px"
+                      />
+                    </div>
+                    <div className="nft_coll_pp">
+                      <Skeleton width="50px" height="50px" borderRadius="50%" />
+                    </div>
+                    <div className="nft_coll_info">
+                      <Skeleton width="70%" height="20px" borderRadius="5px" />
+                      <Skeleton width="50%" height="16px" borderRadius="5px" />
+                    </div>
                   </div>
-                  <div className="nft_coll_pp">
-                    <Link to="/author">
-                      <img className="lazy pp-coll" src={item.authorImage} alt="" />
-                    </Link>
-                    <i className="fa fa-check"></i>
+                ))
+              : collections.map((collection) => (
+                  <div className="nft_coll" key={collection.id}>
+                    <div className="nft_wrap">
+                      <Link to="/item-details">
+                        <img
+                          src={collection.nftImage}
+                          className="lazy img-fluid"
+                          alt=""
+                        />
+                      </Link>
+                    </div>
+                    <div className="nft_coll_pp">
+                      <Link to="/author">
+                        <img
+                          className="lazy pp-coll"
+                          src={collection.authorImage}
+                          alt=""
+                        />
+                      </Link>
+                      <i className="fa fa-check"></i>
+                    </div>
+                    <div className="nft_coll_info">
+                      <Link to="/explore">
+                        <h4>{collection.title}</h4>
+                      </Link>
+                      <span>ERC-{collection.code}</span>
+                    </div>
                   </div>
-                  <div className="nft_coll_info">
-                    <Link to="/explore">
-                      <h4>{item.title}</h4>
-                    </Link>
-                    <span>ERC-{item.code}</span>
-                  </div>
-                </div>
-              ))}
-            </OwlCarousel>
-          </div>
+                ))}
+          </OwlCarousel>
         </div>
       </div>
     </section>
