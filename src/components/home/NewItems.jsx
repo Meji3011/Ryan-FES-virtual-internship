@@ -10,7 +10,7 @@ import NFTCard from "../UI/NFTcard";
 
 const NewItems = () => {
   const [newItems, setNewItems] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchNewItems = async () => {
@@ -19,15 +19,15 @@ const NewItems = () => {
           "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems"
         );
         setNewItems(data);
-        setIsLoaded(true);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching new items:", error);
-        setIsLoaded(true);
+        setIsLoading(false);
       }
     };
 
     fetchNewItems();
-  }, []);
+  }, [isLoading]);
 
   const options = {
     loop: true,
@@ -65,7 +65,7 @@ const NewItems = () => {
             </div>
           </div>
           <OwlCarousel className="owl-carousel" {...options}>
-            {isLoaded
+            {isLoading
               ? Array.from({ length: 4 }).map((_, index) => (
                   <div className="nft__item" key={index}>
                     <div className="author_list_pp">
