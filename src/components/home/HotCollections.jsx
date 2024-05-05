@@ -8,7 +8,7 @@ import Skeleton from "../UI/Skeleton";
 
 const HotCollections = () => {
   const [collections, setCollections] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHotCollections = async () => {
@@ -17,15 +17,15 @@ const HotCollections = () => {
           "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections"
         );
         setCollections(data);
-        setIsLoaded(true);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching hot collections:", error);
-        setIsLoaded(true);
+        setIsLoading(false);
       }
     };
 
     fetchHotCollections();
-  }, []);
+  }, [isLoading]);
 
   const options = {
     loop: true,
@@ -63,7 +63,7 @@ const HotCollections = () => {
             </div>
           </div>
           <OwlCarousel className="owl-carousel" {...options}>
-            {isLoaded
+            {isLoading
               ? Array.from({ length: 4 }).map((_, index) => (
                   <div className="nft_coll" key={index}>
                     <div className="nft_wrap">
