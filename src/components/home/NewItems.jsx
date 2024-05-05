@@ -5,11 +5,11 @@ import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.min.css";
 import "owl.carousel/dist/assets/owl.theme.default.min.css";
 import Skeleton from "../UI/Skeleton";
+import Timer from "../UI/Timer";
 
 const NewItems = () => {
   const [newItems, setNewItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
     const fetchNewItems = async () => {
@@ -26,33 +26,7 @@ const NewItems = () => {
     };
 
     fetchNewItems();
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  const formatCountdown = (expiryDate) => {
-    const remainingTime = expiryDate - currentTime;
-
-    if (remainingTime <= 0) {
-      return "Expired";
-    }
-
-    const seconds = Math.floor((remainingTime / 1000) % 60);
-    const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
-    const hours = Math.floor((remainingTime / 1000 / 60 / 60) % 24);
-
-    return `${hours.toString().padStart(2, "0")}h${minutes
-      .toString()
-      .padStart(2, "0")}m${seconds.toString().padStart(2, "0")}s`;
-  };
+  }, [isLoading]);
 
   const options = {
     loop: true,
@@ -121,10 +95,8 @@ const NewItems = () => {
                         <i className="fa fa-check"></i>
                       </Link>
                     </div>
-                    {item.expiryDate > currentTime && (
-                      <div className="de_countdown">
-                        {formatCountdown(item.expiryDate)}
-                      </div>
+                    {item.expiryDate >  Date.now() && (
+                      <Timer expiryDate={item.expiryDate} />
                     )}
                     <div className="nft__item_wrap">
                       <div className="nft__item_extra">

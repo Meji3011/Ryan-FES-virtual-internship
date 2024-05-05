@@ -26,7 +26,7 @@ const HotCollections = () => {
     };
 
     fetchHotCollections();
-  }, []);
+  }, [isLoading]);
 
   const options = {
     loop: true,
