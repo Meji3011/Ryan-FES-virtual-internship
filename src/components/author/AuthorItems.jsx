@@ -11,6 +11,7 @@ const AuthorItems = () => {
 
   useEffect(() => {
     const fetchAuthorData = async () => {
+
       try {
         const { data } = await axios.get(
           `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
@@ -31,28 +32,40 @@ const AuthorItems = () => {
       <div className="tab-1">
         <div className="row">
           {isLoading ? (
-            <div>
-              <Skeleton width="100px" height="100px" borderRadius="50%" />
-              <Skeleton width="200px" height="20px" />
-              <Skeleton width="150px" height="20px" />
-              <Skeleton width="100px" height="20px" />
-              {Array.from({ length: 8 }, (_, index) => (
-                <Skeleton
-                  key={index}
-                  width="200px"
-                  height="300px"
-                  borderRadius="8px"
-                />
-              ))}
-            </div>
+            Array.from({ length: 8 }).map((_, index) => (
+              <div
+                className="col-lg-3 col-md-6 col-sm-6 col-xs-12"
+              >
+                <div className="nft__item" key={index}>
+                  <div className="author_list_pp">
+                    <Skeleton width="50px" height="50px" borderRadius="50%" />
+                    <i className="fa fa-check"></i>
+                  </div>
+                  <div className="nft__item_wrap">
+                    <Skeleton width="100%" height="300px" borderRadius="10px" />
+                  </div>
+                  <div className="nft__item_info">
+                    <Skeleton width="70%" height="20px" borderRadius="5px" />
+                    <Skeleton width="50%" height="16px" borderRadius="5px" />
+                  </div>
+                </div>
+              </div>
+            ))
           ) : (
             <>
               <div className="nft-collection">
-              <div className="row">
+                <div className="row">
                   {authorData.nftCollection.map((nft) => {
                     return (
-                      <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={nft.id}>
-                        <NFTCard nft={nft} authorImage={authorData.authorImage} authorId={authorData.authorId}/>
+                      <div
+                        className="col-lg-3 col-md-6 col-sm-6 col-xs-12"
+                        key={nft.id}
+                      >
+                        <NFTCard
+                          nft={nft}
+                          authorImage={authorData.authorImage}
+                          authorId={authorData.authorId}
+                        />
                       </div>
                     );
                   })}

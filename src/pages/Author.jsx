@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../components/author/AuthorItems";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Skeleton from "../components/UI/Skeleton";
@@ -60,8 +59,8 @@ const Author = () => {
                     <div className="profile_avatar">
                       {isLoading ? (
                         <Skeleton
-                          width="100px"
-                          height="100px"
+                          width="150px"
+                          height="150px"
                           borderRadius="50%"
                         />
                       ) : (
@@ -72,9 +71,17 @@ const Author = () => {
                       <div className="profile_name">
                         {isLoading ? (
                           <>
-                            <Skeleton width="200px" height="20px" />
-                            <Skeleton width="150px" height="20px" />
-                            <Skeleton width="100px" height="20px" />
+                            <h4>
+                              <div>
+                                <Skeleton width="150px" height="30px" />
+                              </div>
+                              <div>
+                                <Skeleton width="100px" height="20px" />
+                              </div>
+                              <div>
+                                <Skeleton width="250px" height="20px" />
+                              </div>
+                            </h4>
                           </>
                         ) : (
                           <h4>
@@ -102,10 +109,7 @@ const Author = () => {
                           `${followerCount} followers`
                         )}
                       </div>
-                      <button
-                        className="btn-main"
-                        onClick={handleFollowClick}
-                      >
+                      <button className="btn-main" onClick={handleFollowClick}>
                         {isFollowing ? "Unfollow" : "Follow"}
                       </button>
                     </div>
