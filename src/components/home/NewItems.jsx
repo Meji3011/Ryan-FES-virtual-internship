@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.min.css";
 import "owl.carousel/dist/assets/owl.theme.default.min.css";
 import Skeleton from "../UI/Skeleton";
-import Timer from "../UI/Timer";
 import NFTCard from "../UI/NFTcard";
 
 const NewItems = () => {
@@ -70,6 +68,7 @@ const NewItems = () => {
                   <div className="nft__item" key={index}>
                     <div className="author_list_pp">
                       <Skeleton width="50px" height="50px" borderRadius="50%" />
+                      <i className="fa fa-check"></i>
                     </div>
                     <div className="nft__item_wrap">
                       <Skeleton
