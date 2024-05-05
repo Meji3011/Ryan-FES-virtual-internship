@@ -1,9 +1,84 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
+import axios from "axios";
+import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.min.css";
+import "owl.carousel/dist/assets/owl.theme.default.min.css";
+import Skeleton from "../UI/Skeleton";
 
 const NewItems = () => {
+  const [newItems, setNewItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  useEffect(() => {
+    const fetchNewItems = async () => {
+      try {
+        const { data } = await axios.get(
+          "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems"
+        );
+        setNewItems(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching new items:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchNewItems();
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  const formatCountdown = (expiryDate) => {
+    const remainingTime = expiryDate - currentTime;
+
+    if (remainingTime <= 0) {
+      return "Expired";
+    }
+
+    const seconds = Math.floor((remainingTime / 1000) % 60);
+    const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+    const hours = Math.floor((remainingTime / 1000 / 60 / 60) % 24);
+
+    return `${hours.toString().padStart(2, "0")}h${minutes
+      .toString()
+      .padStart(2, "0")}m${seconds.toString().padStart(2, "0")}s`;
+  };
+
+  const options = {
+    loop: true,
+    margin: 10,
+    nav: true,
+    dots: false,
+    navText: [
+      '<span aria-label="Prev">‹</span>',
+      '<span aria-label="Next">›</span>',
+    ],
+    responsive: {
+      0: {
+        items: 1,
+      },
+      740: {
+        items: 2,
+      },
+      1000: {
+        items: 3,
+      },
+      1400: {
+        items: 4,
+      },
+    },
+  };
+
   return (
     <section id="section-items" className="no-bottom">
       <div className="container">
@@ -14,62 +89,82 @@ const NewItems = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          {new Array(4).fill(0).map((_, index) => (
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
-              <div className="nft__item">
-                <div className="author_list_pp">
-                  <Link
-                    to="/author"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Creator: Monica Lucas"
-                  >
-                    <img className="lazy" src={AuthorImage} alt="" />
-                    <i className="fa fa-check"></i>
-                  </Link>
-                </div>
-                <div className="de_countdown">5h 30m 32s</div>
-
-                <div className="nft__item_wrap">
-                  <div className="nft__item_extra">
-                    <div className="nft__item_buttons">
-                      <button>Buy Now</button>
-                      <div className="nft__item_share">
-                        <h4>Share</h4>
-                        <a href="" target="_blank" rel="noreferrer">
-                          <i className="fa fa-facebook fa-lg"></i>
-                        </a>
-                        <a href="" target="_blank" rel="noreferrer">
-                          <i className="fa fa-twitter fa-lg"></i>
-                        </a>
-                        <a href="">
-                          <i className="fa fa-envelope fa-lg"></i>
-                        </a>
+          <OwlCarousel className="owl-carousel" {...options}>
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div className="nft__item" key={index}>
+                    <div className="author_list_pp">
+                      <Skeleton width="50px" height="50px" borderRadius="50%" />
+                    </div>
+                    <div className="nft__item_wrap">
+                      <Skeleton
+                        width="100%"
+                        height="300px"
+                        borderRadius="10px"
+                      />
+                    </div>
+                    <div className="nft__item_info">
+                      <Skeleton width="70%" height="20px" borderRadius="5px" />
+                      <Skeleton width="50%" height="16px" borderRadius="5px" />
+                    </div>
+                  </div>
+                ))
+              : newItems.map((item) => (
+                  <div className="nft__item" key={item.id}>
+                    <div className="author_list_pp">
+                      <Link to={`/author/${item.authorId}`}>
+                        <img
+                          className="lazy"
+                          src={item.authorImage}
+                          alt={item.authorId}
+                        />
+                        <i className="fa fa-check"></i>
+                      </Link>
+                    </div>
+                    {item.expiryDate > currentTime && (
+                      <div className="de_countdown">
+                        {formatCountdown(item.expiryDate)}
+                      </div>
+                    )}
+                    <div className="nft__item_wrap">
+                      <div className="nft__item_extra">
+                        <div className="nft__item_buttons">
+                          <button>Buy Now</button>
+                          <div className="nft__item_share">
+                            <h4>Share</h4>
+                            <a href="" target="_blank" rel="noreferrer">
+                              <i className="fa fa-facebook fa-lg"></i>
+                            </a>
+                            <a href="" target="_blank" rel="noreferrer">
+                              <i className="fa fa-twitter fa-lg"></i>
+                            </a>
+                            <a href="">
+                              <i className="fa fa-envelope fa-lg"></i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <Link to={`/item-details/${item.nftId}`}>
+                        <img
+                          src={item.nftImage}
+                          className="lazy nft__item_preview"
+                          alt={item.title}
+                        />
+                      </Link>
+                    </div>
+                    <div className="nft__item_info">
+                      <Link to="/item-details">
+                        <h4>{item.title}</h4>
+                      </Link>
+                      <div className="nft__item_price">{item.price} ETH</div>
+                      <div className="nft__item_like">
+                        <i className="fa fa-heart"></i>
+                        <span>{item.likes}</span>
                       </div>
                     </div>
                   </div>
-
-                  <Link to="/item-details">
-                    <img
-                      src={nftImage}
-                      className="lazy nft__item_preview"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-                <div className="nft__item_info">
-                  <Link to="/item-details">
-                    <h4>Pinky Ocean</h4>
-                  </Link>
-                  <div className="nft__item_price">3.08 ETH</div>
-                  <div className="nft__item_like">
-                    <i className="fa fa-heart"></i>
-                    <span>69</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                ))}
+          </OwlCarousel>
         </div>
       </div>
     </section>
