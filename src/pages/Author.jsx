@@ -1,10 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../components/author/AuthorItems";
 import { Link } from "react-router-dom";
-import AuthorImage from "../images/author_thumbnail.jpg";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import Skeleton from "../components/UI/Skeleton";
 
 const Author = () => {
+  const { authorId } = useParams();
+  const [authorData, setAuthorData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+
+  useEffect(() => {
+    const fetchAuthorData = async () => {
+      try {
+        const { data } = await axios.get(
+          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
+        );
+        setAuthorData(data);
+        setFollowerCount(data.followers);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching new items:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchAuthorData();
+  }, [authorId]);
+
+  const handleFollowClick = () => {
+    setIsFollowing(!isFollowing);
+    setFollowerCount((prevCount) =>
+      isFollowing ? prevCount - 1 : prevCount + 1
+    );
+  };
+
   return (
     <div id="wrapper">
       <div className="no-bottom no-top" id="content">
@@ -25,29 +58,56 @@ const Author = () => {
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
-                      <img src={AuthorImage} alt="" />
+                      {isLoading ? (
+                        <Skeleton
+                          width="100px"
+                          height="100px"
+                          borderRadius="50%"
+                        />
+                      ) : (
+                        <img src={authorData.authorImage} alt="" />
+                      )}
 
                       <i className="fa fa-check"></i>
                       <div className="profile_name">
-                        <h4>
-                          Monica Lucas
-                          <span className="profile_username">@monicaaaa</span>
-                          <span id="wallet" className="profile_wallet">
-                            UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7
-                          </span>
-                          <button id="btn_copy" title="Copy Text">
-                            Copy
-                          </button>
-                        </h4>
+                        {isLoading ? (
+                          <>
+                            <Skeleton width="200px" height="20px" />
+                            <Skeleton width="150px" height="20px" />
+                            <Skeleton width="100px" height="20px" />
+                          </>
+                        ) : (
+                          <h4>
+                            {authorData.authorName}
+                            <span className="profile_username">
+                              @{authorData.tag}
+                            </span>
+                            <span id="wallet" className="profile_wallet">
+                              {authorData.address}
+                            </span>
+                            <button id="btn_copy" title="Copy Text">
+                              Copy
+                            </button>
+                          </h4>
+                        )}
                       </div>
                     </div>
                   </div>
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
-                      <div className="profile_follower">573 followers</div>
-                      <Link to="#" className="btn-main">
-                        Follow
-                      </Link>
+                      <div className="profile_follower">
+                        {isLoading ? (
+                          <Skeleton width="100px" height="20px" />
+                        ) : (
+                          `${followerCount} followers`
+                        )}
+                      </div>
+                      <button
+                        className="btn-main"
+                        onClick={handleFollowClick}
+                      >
+                        {isFollowing ? "Unfollow" : "Follow"}
+                      </button>
                     </div>
                   </div>
                 </div>

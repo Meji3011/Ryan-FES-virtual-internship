@@ -27,7 +27,7 @@ const Timer = ({ expiryDate }) => {
     const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
     const hours = Math.floor((remainingTime / 1000 / 60 / 60) % 24);
 
-    return `${hours.toString().padStart(2, '0')}h${minutes.toString().padStart(2, '0')}m${seconds.toString().padStart(2, '0')}s`;
+    return `${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
   };
 
   return <div className="de_countdown">{formatCountdown()}</div>;

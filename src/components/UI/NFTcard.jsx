@@ -1,17 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Timer from './Timer';
+import React from "react";
+import { Link } from "react-router-dom";
+import Timer from "./Timer";
 
-const NFTCard = ({ item }) => {
+const NFTCard = ({ nft, item, authorImage, authorId}) => {
+  const displayItem = nft || item;
+
   return (
-    <div className="nft__item" key={item.id}>
+    <div className="nft__item" key={displayItem.id}>
       <div className="author_list_pp">
-        <Link to={`/author/${item.authorId}`}>
-          <img className="lazy" src={item.authorImage} alt={item.authorId} />
-          <i className="fa fa-check"></i>
-        </Link>
+          <Link to={`/author/${displayItem.authorId || authorId}`}>
+            <img
+              className="lazy"
+              src={displayItem.authorImage || authorImage}
+              alt=""
+            />
+            <i className="fa fa-check"></i>
+          </Link>
       </div>
-      {item.expiryDate > Date.now() && <Timer expiryDate={item.expiryDate} />}
+      {item && item.expiryDate > Date.now() && (
+        <Timer expiryDate={item.expiryDate} />
+      )}
       <div className="nft__item_wrap">
         <div className="nft__item_extra">
           <div className="nft__item_buttons">
@@ -30,22 +38,22 @@ const NFTCard = ({ item }) => {
             </div>
           </div>
         </div>
-        <Link to={`/item-details/${item.nftId}`}>
+        <Link to={`/item-details/${displayItem.nftId}`}>
           <img
-            src={item.nftImage}
+            src={displayItem.nftImage}
             className="lazy nft__item_preview"
-            alt={item.title}
+            alt={displayItem.title}
           />
         </Link>
       </div>
       <div className="nft__item_info">
-        <Link to={`/item-details/${item.nftId}`}>
-          <h4>{item.title}</h4>
+        <Link to={`/item-details/${displayItem.nftId}`}>
+          <h4>{displayItem.title}</h4>
         </Link>
-        <div className="nft__item_price">{item.price} ETH</div>
+        <div className="nft__item_price">{displayItem.price} ETH</div>
         <div className="nft__item_like">
           <i className="fa fa-heart"></i>
-          <span>{item.likes}</span>
+          <span>{displayItem.likes}</span>
         </div>
       </div>
     </div>
