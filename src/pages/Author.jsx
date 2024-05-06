@@ -4,6 +4,9 @@ import AuthorItems from "../components/author/AuthorItems";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Skeleton from "../components/UI/Skeleton";
+import AOS from "aos";
+import "aos/dist/aos.css";
+AOS.init();
 
 const Author = () => {
   const { authorId } = useParams();
@@ -57,7 +60,12 @@ const Author = () => {
         <section aria-label="section">
           <div className="container">
             <div className="row">
-              <div className="col-md-12">
+              <div
+                className="col-md-12"
+                data-aos="fade-in"
+                data-aos-easing="ease-in"
+                data-aos-duration="700"
+              >
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
@@ -121,7 +129,12 @@ const Author = () => {
                 </div>
               </div>
 
-              <div className="col-md-12">
+              <div
+                className="col-md-12"
+                data-aos="fade-in"
+                data-aos-easing="ease-in"
+                data-aos-duration="700"
+              >
                 <div className="de_tab tab_simple">
                   <AuthorItems />
                 </div>
