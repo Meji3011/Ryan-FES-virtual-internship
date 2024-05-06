@@ -11,7 +11,6 @@ const AuthorItems = () => {
 
   useEffect(() => {
     const fetchAuthorData = async () => {
-
       try {
         const { data } = await axios.get(
           `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
@@ -33,10 +32,8 @@ const AuthorItems = () => {
         <div className="row">
           {isLoading ? (
             Array.from({ length: 8 }).map((_, index) => (
-              <div
-                className="col-lg-3 col-md-6 col-sm-6 col-xs-12"
-              >
-                <div className="nft__item" key={index}>
+              <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
+                <div className="nft__item">
                   <div className="author_list_pp">
                     <Skeleton width="50px" height="50px" borderRadius="50%" />
                     <i className="fa fa-check"></i>
