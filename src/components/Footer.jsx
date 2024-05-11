@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../images/Ultraverse.png";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
   return (
     <footer className="footer-light">
       <div className="container">
@@ -159,7 +160,7 @@ const Footer = () => {
                 <div className="de-flex-col">
                   <Link className="footer__link" to="/">
                     <img alt="" className="f-logo" src={Logo} />
-                    <span className="copy">&copy; Copyright 2022</span>
+                    <span className="copy">&copy; Copyright {currentYear}</span>
                   </Link>
                 </div>
               </div>
